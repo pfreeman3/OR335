@@ -19,7 +19,7 @@
 // 5 = "Boston"
 
 
-public Class Car{
+public class Car{
   /**
   * Creates Car for use in simulation; we will be considering several factors, which will determine under what conditions the 
   * car will stop at a charging station.
@@ -29,15 +29,15 @@ public Class Car{
   * @param home Starting City of vehicle
   * @param stayTime Time staying at the destination city.
   */
-  public void Car(int carType, int wealth, int home, int stayTime, int desitnation){
-    public double chargePer = 100.0; // The % that the batery is charged.
-    public int type = carType; // This is a number that corresponds to the type of car, 1 = Tesla MS
-    public int wealth = wealth;
-    public int home = home; // Home is one of the cities. 1-5.
-    public int stayTime = stayTime;
-    public int destination = destination;
+  public Car(int carType, int wealth, int home, int stayTime, int destination){
+     double chargePer = 100.0; // The % that the batery is charged.
+     int type = carType; // This is a number that corresponds to the type of car, 1 = Tesla MS
+     int wealth = this.wealth;
+     int home = this.home; // Home is one of the cities. 1-5.
+     int stayTime = this.stayTime;
+     int destination = this.destination;
     // Make the things that come with the attributes
-    public int chargeTime; // Time it takes to charge a car, will differ, find
+     int chargeTime; // Time it takes to charge a car, will differ, find
     // PLACEHOLDER PLACEHOLDER PLACEHOLDER
     switch(carType){ // These are placeholder numvers, please change once we have proper data
       case 1: chargeTime = 3;
@@ -57,7 +57,7 @@ public Class Car{
       case 3: range = 5;
       break;
     }
-    public double searchRange = range/4; // This is the threshhold where it will look for more 
+     double searchRange = range/4; // This is the threshhold where it will look for more 
     private double homePoint;
     switch(home){ // These are placeholder numbers, please change once we have proper data
       case 1: homePoint = 0;
@@ -85,7 +85,7 @@ public Class Car{
       case 5: destinationPoint = 4;
       break;
     }
-    public int distance = destinationPoint - homePoint; // This is the distance the car needs to travel
+     int distance = destinationPoint - homePoint; // This is the distance the car needs to travel
     final int originalDistance = distance;
   }
   
