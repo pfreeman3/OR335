@@ -2,7 +2,7 @@
 //Mileage?
 //Battery type / Time to charge
 //[Assume Fully Charged, most charging happens at home]
-//Wealth Level (1 = poor, 2 = middle, 3 = rich)
+//Wealth Level (1 = lower, 2 = middle, 3 = upper)
 //Distance to Destination
 //Distance to next charge
 //Time to stay / leave time from destination
@@ -17,14 +17,25 @@
 // 3 = "Philly"
 // 4 = "NY"
 // 5 = "Boston"
+
+
 public Class Car{
-  public void Car(int carType_, int wealth_, int home_, int stayTime_, int desitnation_){
+  /**
+  * Creates Car for use in simulation; we will be considering several factors, which will determine under what conditions the 
+  * car will stop at a charging station.
+  *
+  * @param carType Int value that determines the type of electric car (1 = BMW i3, 2 = Tesla Model 3, 3 = Chevy Bolt)
+  * @param wealth wealth status of driver (1 = lower, 2 = middle, 3 = upper)
+  * @param home Starting City of vehicle
+  * @param stayTime Time staying at the destination city.
+  */
+  public void Car(int carType, int wealth, int home, int stayTime, int desitnation){
     public double chargePer = 100.0; // The % that the batery is charged.
-    public int type = carType_; // This is a number that corresponds to the type of car, 1 = Tesla MS
+    public int type = carType; // This is a number that corresponds to the type of car, 1 = Tesla MS
     public int wealth = wealth;
-    public int home = home_; // Home is one of the cities. 1-5.
-    public int stayTime = stayTime_;
-    public int destination = destination_;
+    public int home = home; // Home is one of the cities. 1-5.
+    public int stayTime = stayTime;
+    public int destination = destination;
     // Make the things that come with the attributes
     public int chargeTime; // Time it takes to charge a car, will differ, find
     // PLACEHOLDER PLACEHOLDER PLACEHOLDER
