@@ -38,7 +38,12 @@ public class Car{
   * @param stayTime Time staying at the destination city.
   * @param destination the city destination of the vehicle.
   */
-  public Car(int carType, int wealth, int home, int stayTime, int destination){
+  public Car(int carType, 
+             int wealth, 
+             int home, 
+             int stayTime, 
+             int destination){
+    
     double chargePer = 100.0; // The % that the batery is charged.
     this.carType = carType; 
     this.wealth = wealth;
