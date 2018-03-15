@@ -31,11 +31,11 @@ public class Car{
   */
   public Car(int carType, int wealth, int home, int stayTime, int destination){
      double chargePer = 100.0; // The % that the batery is charged.
-      carType = this.carType; // This is a number that corresponds to the type of car, 1 = Tesla MS
-      wealth = this.wealth;
-      home = this.home; // Home is one of the cities. 1-5.
-      stayTime = this.stayTime;
-      destination = this.destination;
+      this.carType = carType; 
+      this.wealth = wealth;
+      this.home = home; // Home is one of the cities. 1-5.
+      this.stayTime = stayTime;
+      this.destination = destination;
     // Make the things that come with the attributes
      int chargeTime; // Time it takes to charge a car, will differ, find
     // PLACEHOLDER PLACEHOLDER PLACEHOLDER
