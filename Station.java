@@ -1,4 +1,4 @@
-abstract public class Station{
+abstract public class abstractStation{
   int length;
   int implementingCost;
   int chargingCost;
