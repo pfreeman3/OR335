@@ -58,7 +58,7 @@ public class Car{
       break;
     }
      double searchRange = range/4; // This is the threshhold where it will look for more 
-    private double homePoint;
+     double homePoint;
     switch(home){ // These are placeholder numbers, please change once we have proper data
       case 1: homePoint = 0;
       break;
@@ -72,7 +72,7 @@ public class Car{
       break;
     }
     
-    private int destinationPoint;
+     int destinationPoint;
     switch(home){ // These are placeholder numbers, please change once we have proper data
       case 1: destinationPoint = 0; // These numbers are the points on which the ities lie
       break;
