@@ -2,7 +2,6 @@
 //Mileage?
 //Battery type / Time to charge
 //[Assume Fully Charged, most charging happens at home]
-//Wealth Level (1 = lower, 2 = middle, 3 = upper)
 //Distance to Destination
 //Distance to next charge
 //Time to stay / leave time from destination
@@ -10,7 +9,6 @@
 //Stores stats.
 
 
-// Time is in units of Minutes
 // home and desitnation int meanings
 // 1 = "Richmond"
 // 2 = "DC"
@@ -20,73 +18,50 @@
 
 
 public class Car{
+  private int carType;
+  private int wealth;
+  private int home;
+  private int stayTime;
+  private int destination;
+
+  private int chargeTimeArr[] = {0,40,50,80}; // time to charge in minutes
+  private int rangeArr[] = {0,114,270,238}; // range of car.
+  private int homePointArr[] = {0,0,109,248,346,561}; // distances from richmond
+
   /**
-  * Creates Car for use in simulation; we will be considering several factors, which will determine under what conditions the 
-  * car will stop at a charging station.
+  * Creates Car for use in simulation; we will be considering several factors,  
+  * which will determine under what conditions the car will stop at a charging station.
   *
   * @param carType Int value that determines the type of electric car (1 = BMW i3, 2 = Tesla Model 3, 3 = Chevy Bolt)
   * @param wealth wealth status of driver (1 = lower, 2 = middle, 3 = upper)
-  * @param home Starting City of vehicle
+  * @param home Starting City of vehicle (1 = Richmond, 2 = D.C., 3 = Philly, 4 = NYC, 5 = Boston)
   * @param stayTime Time staying at the destination city.
+  * @param destination the city destination of the vehicle.
   */
   public Car(int carType, int wealth, int home, int stayTime, int destination){
-     double chargePer = 100.0; // The % that the batery is charged.
-      this.carType = carType; 
-      this.wealth = wealth;
-      this.home = home; // Home is one of the cities. 1-5.
-      this.stayTime = stayTime;
-      this.destination = destination;
+    double chargePer = 100.0; // The % that the batery is charged.
+    this.carType = carType; 
+    this.wealth = wealth;
+    this.home = home; 
+    this.stayTime = stayTime;
+    this.destination = destination;
+
     // Make the things that come with the attributes
-     int chargeTime; // Time it takes to charge a car, will differ, find
-    // PLACEHOLDER PLACEHOLDER PLACEHOLDER
-    switch(carType){ // These are placeholder numvers, please change once we have proper data
-      case 1: chargeTime = 3;
-      break;
-      case 2: chargeTime = 4;
-      break;
-      case 3: chargeTime = 5;
-      break;
-    }
-    int range; // This is the range on a full battery, possible distance is calculated from range*%batterty
-    // PLACEHOLDER PLACEHOLDER PLACEHOLDER
-    switch(carType){ // These are placeholder numbers, please change once we have proper data
-      case 1: range = 3;
-      break;
-      case 2: range = 4;
-      break;
-      case 3: range = 5;
-      break;
-    }
-     double searchRange = range/4; // This is the threshhold where it will look for more 
-     double homePoint;
-    switch(home){ // These are placeholder numbers, please change once we have proper data
-      case 1: homePoint = 0;
-      break;
-      case 2: homePoint = 1;
-      break;
-      case 3: homePoint = 2;
-      break;
-      case 4: homePoint = 3;
-      break;
-      case 5: homePoint = 4;
-      break;
-    }
-    
-     int destinationPoint;
-    switch(home){ // These are placeholder numbers, please change once we have proper data
-      case 1: destinationPoint = 0; // These numbers are the points on which the ities lie
-      break;
-      case 2: destinationPoint = 1;
-      break;
-      case 3: destinationPoint = 2;
-      break;
-      case 4: destinationPoint = 3;
-      break;
-      case 5: destinationPoint = 4;
-      break;
-    }
-     int distance = destinationPoint - homePoint; // This is the distance the car needs to travel
+    int chargeTime = chargeTimeArr[carType]; // Time it takes to charge a car, will differ, find
+    int range = rangeArr[carType]; // This is the range on a full battery, possible distance is calculated from range*%batterty
+    double searchRange = range/4; // This is the threshhold where it will look for more 
+    int homePoint = homePointArr[home]; //distance from richmond
+    int destinationPoint = homePointArr[destination];
+    int distance = destinationPoint - homePoint; // This is the distance the car needs to travel
     final int originalDistance = distance;
+  }
+
+  /**
+  * Deletes car (i.e., when car is finished, or if not applicable to simulation)
+  * @param car Car to be deleted.
+  */
+  public static void deleteCar(Car car){
+    car = null;
   }
   
 }
