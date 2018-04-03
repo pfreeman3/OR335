@@ -68,5 +68,12 @@ public class Car{
   public static void deleteCar(Car car){
     car = null;
   }
+  public ArrayList<Station> getStationList(){
+    //Basic Logic
+    // Can I get to my destination?
+    // If I can, add it to the end of the list
+    // if not add the furthest station in my range
+    // if there is no station, throw an exception
+  }
   
 }
