@@ -21,7 +21,7 @@ public class Car{
   private int carType;
   private int wealth;
   private int home;
-  private int stayTime;
+  private double stayTime;
   private int destination;
 
   private int chargeTimeArr[] = {0,40,50,80}; // time to charge in minutes
@@ -41,7 +41,7 @@ public class Car{
   public Car(int carType, 
              int wealth, 
              int home, 
-             int stayTime, 
+             double stayTime, 
              int destination){
     
     double chargePer = 100.0; // The % that the batery is charged.
