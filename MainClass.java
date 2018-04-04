@@ -18,9 +18,11 @@ public class MainClass{
       break;
       case 2: ss.ProcessStationArrival(evt);
       break;
-      case 3: ss.ProcessStationDeparture(evt);
+      case 3: ss.ProcessOutletDeparture(evt);
       break;
-      case 4: ss.ProcessCityArrival(evt);
+      case 4: ss.ProcessStationDeparture(evt);
+      break;
+      case 5: ss.ProcessCityArrival(evt);
       break;
     }
 //   if (evt.get_type()==Simulator.arrival) 

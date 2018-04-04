@@ -1,16 +1,19 @@
 import Math.*;
-
+import java.util.*;
 public class Simulator {
  public Simulator(){}
     public final static int departCity=1;
     public final static int arriveStation=2;
-    public final static int departStation=3;
-    public final static int arriveCity=4;
+    public final static int departOutlet=3;
+    public final static int departStation=4;
+    public final static int arriveCity=5;
     public double Clock,LastEventTime;
     public int highwaySpeed;        
     public EventList FutureEventList;
     //public Queue Customers;        
     public Rand stream;
+    public ArrayList<City> cityList;
+    public ArrayList<Station> stationList;
     
     public void Initialization(){
      Clock=0.0;
@@ -27,72 +30,64 @@ public class Simulator {
     // FLESHING: NOT DONE
     // Extra Functions Used
     public void ProcessStationArrival(Event evt){
+      // Who and where?
       sta = evt.sta;
       car = evt.car;
+      // Move the car up 1 in its list of stations it needs to get to
       car.moveUp(); // This moves the car's station up by 1
+      // Reduce the car's charge by how long it drove
       car.chargePer = car.chargePer-(Math.abs(car.getLastStation().position - sta.position)/car.range);
-     //*Customers.enqueue(evt);
-        //*wightedQueueLength+=(Clock-LastEventTime)*Queuelength;
-        //*Queuelength++;
-        //if the server is idle, fetch the event, do statistics and put into service
-        if(sta.outletsInUse < sta.capacity){
-         ScheduleStationDeparture(sta, car);
-        }
-        else 
-         sta.queueCar(car);  //server is busy
-        //adjust max Queue Length statistics
-        //*if(MaxQueueLength< Queuelength)
-        //*    MaxQueueLength=Queuelength;
-        //Schedule the next arrival
-        // CHANGE THIS CHANGE THIS CHANGE THIS
-        // No need to make a new event, we already know which events will happen when a car spawns
-        //* Event next_arrival = new Event(,Clock+exponential(stream,MeanInterArrivalTime));
-        // CHANGE THIS CHANGE THIS CHANGE THIS
-        FutureEventList.enqueue(next_arrival);
-        LastEventTime = Clock;
+      if(sta.outletsInUse < sta.capacity){
+        ScheduleStationDeparture(sta, car);
+      }
+      else 
+        sta.queueCar(car);  //server is busy
+      FutureEventList.enqueue(next_arrival);
+      LastEventTime = Clock;
     }
     
     // FRAMEWORK: KINDA-DONE
     // FLESHING: NOT DONE
     // sta.chargeRate is the amount of time it takes to charge 100% IN HOURS
     // car.direction is +1 if it's going + on the line, -1 if it's going - on the line
-    public void ScheduleStationDeparture(Station sta, Car car){
+    public void ScheduleOutletDeparture(Station sta, Car car){
      //NumberOfCustomers++;
-     car.chargePer = 100.0;
      sta.outletsInUse++;
      sta.queueLength--;
      double chargeTime = (1-car.chargePer)*sta.chargeRate; // This may be car specific
-     double travelTime = Math.abs( (sta.position - car.getNextStation().position) /highwaySpeed) );
-     Event departStation = new Event(car.getNextStation(), Clock + chargeTime + travelTime, car, departStation);
-        //*Event depart= new Event(Simulator.departue,Clock+triangular(stream,1,3,8));
-        //*double arrive = Customers.Get(0).get_time();
-        //*double wait= Clock-arrive;
-        //*SumWaitTime+=wait;
-        FutureEventList.enqueue(departStation);
-        //*NumberInService=1;
-        //*Queuelength--;
+     Event departOutlet = new Event(sta, Clock + chargeTime, car, departOutlet);
+     car.chargePer = 100.0;
+     FutureEventList.enqueue(departOutlet);
     }
+    
+    //
+    public void ProcessOutletDeparture(Event e){
+      // Send the Car to the next Station
+      double travelTime = Math.abs( (e.sta.position - e.car.getNextStation().position) /highwaySpeed);
+      Event departStation = new Event(car.getNextStation(), Clock + travelTime, car, departStation);
+      FutureEventList.enqueue(departStation);
+      
+      // Queue the next car if there is one
+      if (e.sta.queuelength>0){
+        sta.outletsInUse--;
+        ScheduleOutletDeparture(e.sta, e.sta.queue.get(0));
+      }
+      else 
+        e.sta.outletsInUse=0;
+    }
+    
     // FRAMEWORK: KINDA DONE
     public void ProcessStationDeparture(Event e){
-     //get the customers description
-      // THIS TAKES THE EVENT OUT
-        Event finished= (Event) Customers.dequeue();
-        // if there are customers in the queue then schedule the departure of the next one
-        //wightedQueueLength+=(Clock-LastEventTime)*Queuelength;
-        if (e.sta.queuelength>0) 
-         ScheduleStationDeparture(e.sta, e.sta.queue.get(0));
-        else 
-         e.sta.outletsInUse=0;
-        //measure the response time and add to the sum
-        //double response= (Clock-finished.get_time());
-        //SumResponseTime+=response;
-        //TotalBusy+=(Clock-LastEventTime);
-        e.sta.departures++;
-        //LastEventTime=Clock;
+      //get the customers description
+      Event arriveStation = new Event(car.getNextStation(), Clock + travelTime, car, arriveStation);
+      e.sta.departures++;
+      FutureEventList.enqueue(arriveStation);
+      LastEventTime=Clock;
     }
     
     public void ScheduleCityDeparture(Car car, City city){
       Event cityDeparture = new Event(city, Clock + .1, car, departCity); // delay will be random
+      FutureEventList.enqueue(cityDeparture);
     }
 
     public void ProcessCityDeparture(Car car, City city){
