@@ -18,15 +18,17 @@
 
 
 public class Car{
-  private int carType;
-  private int wealth;
-  private int home;
-  private double stayTime;
-  private int destination;
-
-  private int chargeTimeArr[] = {0,40,50,80}; // time to charge in minutes
-  private int rangeArr[] = {0,114,270,238}; // range of car.
-  private int homePointArr[] = {0,0,109,248,346,561}; // distances from richmond
+  public double range;
+  public double searchRange;
+  public int carType;
+  public int wealth;
+  public int home;
+  public double stayTime;
+  public int destination;
+  public String carTypeSTR[] = {"null", "BMW i3", "Tesla Model 3", "Chevy Bolt"};
+  public int chargeTimeArr[] = {0,40,50,80}; // time to charge in minutes
+  public double rangeArr[] = {0,114,270,238}; // range of car.
+  public int homePointArr[] = {0,0,109,248,346,561}; // distances from richmond
 
   /**
   * Creates Car for use in simulation; we will be considering several factors,  
@@ -53,8 +55,8 @@ public class Car{
 
     // Make the things that come with the attributes
     int chargeTime = chargeTimeArr[carType]; // Time it takes to charge a car, will differ, find
-    int range = rangeArr[carType]; // This is the range on a full battery, possible distance is calculated from range*%batterty
-    double searchRange = range/4; // This is the threshhold where it will look for more 
+    range = rangeArr[carType]; // This is the range on a full battery, possible distance is calculated from range*%batterty
+    searchRange = range/4; // This is the threshhold where it will look for more 
     int homePoint = homePointArr[home]; //distance from richmond
     int destinationPoint = homePointArr[destination];
     int distance = destinationPoint - homePoint; // This is the distance the car needs to travel
@@ -68,12 +70,12 @@ public class Car{
   public static void deleteCar(Car car){
     car = null;
   }
-  public ArrayList<Station> getStationList(){
+//  public ArrayList<Station> getStationList(){
     //Basic Logic
     // Can I get to my destination?
     // If I can, add it to the end of the list
     // if not add the furthest station in my range
     // if there is no station, throw an exception
-  }
+ // }
   
 }

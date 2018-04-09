@@ -1,4 +1,4 @@
-public Class RechargeStation{
+public class RechargeStation{
 
 
 }
