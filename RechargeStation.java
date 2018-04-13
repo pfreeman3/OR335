@@ -1,17 +1,30 @@
 public class RechargeStation extends Station{
 
-  public RechargeStation(){
+  protected double position;
+  protected int carQueue;
+  protected double getCosts;
+  protected String name;
+  protected int capacity;
 
+  public RechargeStation(String name, double position, int capacity){
+    this.name = name;
+    this.position = position;
+    this.capacity = capacity;
+
+    carQueue = 0;
   }
-  int getPosition(){
-    return 0;
+  public double getPosition(){
+    return position;
   }
-  int getCarqueue(){
-    return 0;
+  public int getCarqueue(){
+    return carQueue;
   }
-  double getCosts(){
-    return 0;
+  public double getCosts(){
+    return 1000000;
   }
-  
+  public int getCapacity(){
+    return capacity;
+  }
+
 
 }

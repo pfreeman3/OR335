@@ -10,6 +10,7 @@ public class Simulator {
     public double Clock,LastEventTime;
     public int highwaySpeed;
     public EventList FutureEventList;
+    public Station StationArr[];
     //public Queue Customers;
     public Rand stream;
     public ArrayList<City> cityList;
@@ -23,6 +24,21 @@ public class Simulator {
      Car car = randomCar();
      Event evt = new Event(car.getNextStation(), Clock, car, departCity);
      FutureEventList.enqueue(evt);
+     Station StationArr[] = { new City("Richmond",0),
+                              new RechargeStation("S1",45,30),
+                              new RechargeStation("S2",104,30),
+                              new City("Washington D.C.",109),
+                              new RechargeStation("S3",136,30),
+                              new RechargeStation("S4",210,30),
+                              new City("Philly", 248),
+                              new RechargeStation("S5",250,30),
+                              new RechargeStation("S6",315,30),
+                              new RechargeStation("S7",335,30),
+                              new City("New York City",346),
+                              new RechargeStation("S8",404.5,30),
+                              new RechargeStation("S9",490,30),
+                              new RechargeStation("S10",538,30),
+                              new City("Boston",561)};
     }
 
     // Gonna change this to ProcessStationArrival
@@ -36,7 +52,7 @@ public class Simulator {
       // Move the car up 1 in its list of stations it needs to get to
       car.moveUp(); // This moves the car's station up by 1
       // Reduce the car's charge by how long it drove
-      car.chargePer = car.chargePer-(Math.abs(car.getLastStation().position - sta.position)/car.range);
+      car.chargePer = car.chargePer-(Math.abs(car.getLastStation().getPosition() - sta.getPosition())/car.range);
       if(sta.outletsInUse < sta.capacity){
         ScheduleStationDeparture(sta, car);
       }

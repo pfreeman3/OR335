@@ -29,6 +29,8 @@ public class Car{
   public int chargeTimeArr[] = {0,40,50,80}; // time to charge in minutes
   public double rangeArr[] = {0,114,270,238}; // range of car.
   public int homePointArr[] = {0,0,109,248,346,561}; // distances from richmond
+  public double chargePer;
+  public boolean destBound;
 
   /**
   * Creates Car for use in simulation; we will be considering several factors,
@@ -46,12 +48,13 @@ public class Car{
              double stayTime,
              int destination){
 
-    double chargePer = 100.0; // The % that the batery is charged.
+    chargePer = 100.0; // The % that the batery is charged.
     this.carType = carType;
     this.wealth = wealth;
     this.home = home;
     this.stayTime = stayTime;
     this.destination = destination;
+    destBound = true;
 
     // Make the things that come with the attributes
     int chargeTime = chargeTimeArr[carType]; // Time it takes to charge a car, will differ, find
@@ -74,10 +77,16 @@ public class Car{
     Station ans = new RechargeStation();
     return ans;
   }
+  public Station getLastStation(){
+
+    return new RechargeStation();
+  }
   // NOT FINISHED
   public void moveUp(){
 
   }
+
+
 //  public ArrayList<Station> getStationList(){
     //Basic Logic
     // Can I get to my destination?
