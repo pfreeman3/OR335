@@ -74,7 +74,7 @@ public class Car{
     car = null;
   }
   public Station getNextStation(){
-    Station ans = new RechargeStation();
+    Station ans = StationArray[0];
     return ans;
   }
   public Station getLastStation(){
