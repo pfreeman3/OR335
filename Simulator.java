@@ -1,4 +1,4 @@
-import Math.*;
+import java.math.*;
 import java.util.*;
 public class Simulator {
  public Simulator(){}
@@ -8,13 +8,13 @@ public class Simulator {
     public final static int departStation=4;
     public final static int arriveCity=5;
     public double Clock,LastEventTime;
-    public int highwaySpeed;        
+    public int highwaySpeed;
     public EventList FutureEventList;
-    //public Queue Customers;        
+    //public Queue Customers;
     public Rand stream;
     public ArrayList<City> cityList;
     public ArrayList<Station> stationList;
-    
+
     public void Initialization(){
      Clock=0.0;
      highwaySpeed = 45;
@@ -31,8 +31,8 @@ public class Simulator {
     // Extra Functions Used
     public void ProcessStationArrival(Event evt){
       // Who and where?
-      sta = evt.sta;
-      car = evt.car;
+      Station sta = evt.getStation();
+      Car car = evt.getCar();
       // Move the car up 1 in its list of stations it needs to get to
       car.moveUp(); // This moves the car's station up by 1
       // Reduce the car's charge by how long it drove
@@ -40,12 +40,12 @@ public class Simulator {
       if(sta.outletsInUse < sta.capacity){
         ScheduleStationDeparture(sta, car);
       }
-      else 
+      else
         sta.queueCar(car);  //server is busy
       FutureEventList.enqueue(next_arrival);
       LastEventTime = Clock;
     }
-    
+
     // FRAMEWORK: KINDA-DONE
     // FLESHING: NOT DONE
     // sta.chargeRate is the amount of time it takes to charge 100% IN HOURS
@@ -59,23 +59,23 @@ public class Simulator {
      car.chargePer = 100.0;
      FutureEventList.enqueue(departOutlet);
     }
-    
+
     //
     public void ProcessOutletDeparture(Event e){
       // Send the Car to the next Station
       double travelTime = Math.abs( (e.sta.position - e.car.getNextStation().position) /highwaySpeed);
       Event departStation = new Event(car.getNextStation(), Clock + travelTime, car, departStation);
       FutureEventList.enqueue(departStation);
-      
+
       // Queue the next car if there is one
       if (e.sta.queuelength>0){
         sta.outletsInUse--;
         ScheduleOutletDeparture(e.sta, e.sta.queue.get(0));
       }
-      else 
+      else
         e.sta.outletsInUse=0;
     }
-    
+
     // FRAMEWORK: KINDA DONE
     public void ProcessStationDeparture(Event e){
       //get the customers description
@@ -84,23 +84,23 @@ public class Simulator {
       FutureEventList.enqueue(arriveStation);
       LastEventTime=Clock;
     }
-    
+
     public void ScheduleCityDeparture(Car car, City city){
       Event cityDeparture = new Event(city, Clock + .1, car, departCity); // delay will be random
       FutureEventList.enqueue(cityDeparture);
     }
 
     public void ProcessCityDeparture(Car car, City city){
-      // Send it to a station, 
+      // Send it to a station,
       double travelTime = Math.abs( (city.position - car.getNextStation().position) /highwaySpeed);
       Event evt = new Event(car.getNextStation, Clock + travelTime, car, stationArrival);
-      
+
       //and make a new car from a new city
       int delayTime; // This is how long it takes to make the next car
       Car newCar = randomCar();
       ScheduleCityDeparture(newCar, cityList.get(cityNum));
     }
-    
+
     // Produces a car with random attributes
     public Car randomCar(){
       // Logic:
@@ -109,35 +109,35 @@ public class Simulator {
       // generate a random welath level (unused) between 1-3
       int cityNum = (int)uniform(stream, 1,6);
       int destinationNum = cityNum;
-      while(cityNum = destinationNum){
-        int destinationNum = (int)uniform(stream,1,6);
+      while(cityNum == destinationNum){
+        destinationNum = (int)uniform(stream,1,6);
       }
       int carType = (int)uniform(stream,1,4);
       int wealthLvl = (int)uniform(stream,1,4);
       double stayTime = 24; // This says that all cars stay for a day no matter what, that will not be true
-      Car newCar = new Car(carType,wealthLvl,cityNum, stayTime,destinationNum); 
+      Car newCar = new Car(carType,wealthLvl,cityNum, stayTime,destinationNum);
       return newCar;
     }
-    
+
     // Produces a random number between a and b
     public static double uniform(Rand rng, double a, double b) {
      return (b-a)*rng.next()+a;
     }
-    
+
     public static double exponential(Rand rng,double mean){
      return -mean*Math.log(rng.next());
     }
 
     public static double triangular(Rand rng,double a, double b, double c){
      double R = rng.next();
-     double x; 
+     double x;
      if (R <= (b-a)/(c-a))
       x = a + Math.sqrt((b-a)*(c-a)*R);
      else
       x = c - Math.sqrt((c-b)*(c-a)*(1-R));
      return x;
     }
-    
+
     public  void ReportGeneration(){
      double RHO=TotalBusy/Clock;
         System.out.println("\n  Server Utilization                         " +RHO );
@@ -148,8 +148,3 @@ public class Simulator {
         System.out.println("\n  Maximum Number Of Customers In Queue       " +  MaxQueueLength);
     }
 }
-
-    
-    
-
-        
