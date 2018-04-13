@@ -10,11 +10,27 @@ public class Simulator {
     public double Clock,LastEventTime;
     public int highwaySpeed;
     public EventList FutureEventList;
-    public Station StationArr[];
+//    public Station StationArr[];
     //public Queue Customers;
     public Rand stream;
     public ArrayList<City> cityList;
     public ArrayList<Station> stationList;
+
+    public Station StationArray[] = { new City("Richmond",0),
+                                    new RechargeStation("S1",45,30),
+                                    new RechargeStation("S2",104,30),
+                                    new City("Washington D.C.",109),
+                                    new RechargeStation("S3",136,30),
+                                    new RechargeStation("S4",210,30),
+                                    new City("Philly", 248),
+                                    new RechargeStation("S5",250,30),
+                                    new RechargeStation("S6",315,30),
+                                    new RechargeStation("S7",335,30),
+                                    new City("New York City",346),
+                                    new RechargeStation("S8",404.5,30),
+                                    new RechargeStation("S9",490,30),
+                                    new RechargeStation("S10",538,30),
+                                    new City("Boston",561)};
 
     public void Initialization(){
      Clock=0.0;
@@ -24,21 +40,7 @@ public class Simulator {
      Car car = randomCar();
      Event evt = new Event(car.getNextStation(), Clock, car, departCity);
      FutureEventList.enqueue(evt);
-     Station StationArr[] = { new City("Richmond",0),
-                              new RechargeStation("S1",45,30),
-                              new RechargeStation("S2",104,30),
-                              new City("Washington D.C.",109),
-                              new RechargeStation("S3",136,30),
-                              new RechargeStation("S4",210,30),
-                              new City("Philly", 248),
-                              new RechargeStation("S5",250,30),
-                              new RechargeStation("S6",315,30),
-                              new RechargeStation("S7",335,30),
-                              new City("New York City",346),
-                              new RechargeStation("S8",404.5,30),
-                              new RechargeStation("S9",490,30),
-                              new RechargeStation("S10",538,30),
-                              new City("Boston",561)};
+
     }
 
     // Gonna change this to ProcessStationArrival
