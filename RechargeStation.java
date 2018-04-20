@@ -1,22 +1,92 @@
+import java.util.*;
 public class RechargeStation extends Station{
 
   protected double position;
-  protected int carQueue;
+  protected ArrayList<Car> carQueue;
+  protected ArrayList<Car> outletQueue;
   protected double getCosts;
   protected String name;
   protected int capacity;
+  protected int outletsInUse;
+  protected int queueLength;
+  // Statistics
+  protected double accumWaiting;
+  protected double accumUtilization;
+  protected double lastTime;
+  protected int departures;
+  
 
   public RechargeStation(String name, double position, int capacity){
     this.name = name;
     this.position = position;
     this.capacity = capacity;
-
-    carQueue = 0;
+    this.carQueue = new ArrayList<Car>();
+    this.outletQueue = new ArrayList<Car>();
   }
+  
+  public void queueCar(Car car){
+    // First, collect statistics
+    updateStats();
+    // queue the car
+    queueLength++;
+    outletQueue.add(car);
+  }
+  
+  public void dequeueCar(Car car){
+    // First, collect statistics
+    updateStats();
+    // Dequeue the car
+    queueLength--;
+    outletQueue.remove(car);
+  }
+  
+  // Puts a car in this station's outlets
+  public void queueOutlet(Car car){
+    // First, collect statistics
+    updateStats();
+    // queue the car
+    outletsInUse++;
+    if(outletsInUse > capacity){
+      throw new Exception("You tried to put too many cars in this Station's outlets");
+    }
+    outletQueue.add(car);
+  }
+  
+  // Remove a car from the queue of cars in the outlet
+  public void dequeueOutlet(Car car){
+    // First, collect statistics
+    updateStats();
+    // Dequeue the car
+    outletsInUse--;
+    outletQueue.remove(car);
+    departures++;
+  }
+  
+  // Updates the statistics associated with this station
+  public void updateStats(){
+    accumUtilization += (ss.Clock - lastTime)*outletsInUse;
+    accumWaiting += (ss.Clock - lastTime)*queueLength;
+    lastTime = ss.Clock;
+  }
+  
+  // This is a profile of 
+  public String report(){
+    String wStr = 
+      "STATION REPORT\n" +
+      "Name: " + name + 
+      "\nPosition: " + position + 
+      "\nCars In Queue: " + queueLength +
+      "\nOutlets in Use: " + outletsInUse +
+      "\nDepartures: " + departures +     
+      "\nMy WaitingTime: " + accumWaiting +
+      "\nUtilization: " + accumUtilization;
+    return wStr;
+  }
+  
   public double getPosition(){
     return position;
   }
-  public int getCarqueue(){
+  public ArrayList<Car> getCarqueue(){
     return carQueue;
   }
   public double getCosts(){
