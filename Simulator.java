@@ -112,24 +112,14 @@ public class Simulator {
       if (e.getStation().getQueueLength()>0){
         e.getStation().dequeueOutlet(e.getCar());
         ScheduleOutletDeparture((RechargeStation)e.getStation(), e.getStation().getCarQueue().get(0));
+        e.getStation().dequeueCar(e.getStation().getCarQueue().get(0));
       }
       else 
         e.getStation().dequeueOutlet(e.getCar());
     }
     
-    // This will probably never be un-commented, it's kinda useless and does 
-    // the same thing as ProcessOutletDeparture
-//    // FRAMEWORK: KINDA DONE
-//    public void ProcessStationDeparture(Event e){
-//      //get the customers description
-//      Event arriveStation = new Event(car.getNextStation(), Clock + travelTime, car, arriveStation);
-//      e.getStation().departures++;
-//      FutureEventList.enqueue(arriveStation);
-//      LastEventTime=Clock;
-//    }
-    
     public void ScheduleCityDeparture(Car car, City city){
-      double delayTime = .1; // This will be random in the future
+      double delayTime = .01; // This will be random in the future
       Event cityDeparture = new Event(city, Clock + delayTime, car, departCity); // delay will be random, right now it's .1
       FutureEventList.enqueue(cityDeparture);
     }
