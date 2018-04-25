@@ -5,11 +5,11 @@ public class Event{
   private Car car;
   private int type;
   public Event ( Station sta , double time , Car car, int type){
-   sta = sta ;   // The station that the event occurs in, includes all kinda of
+   this.sta = sta ;   // The station that the event occurs in, includes all kinda of
                     //RrechargeStations and Cities
-   time = time ; // The point in time that the event occurs
-   car = car;    // The car involved in the event
-   type = type;  // The type of event that this is
+   this.time = time ; // The point in time that the event occurs
+   this.car = car;    // The car involved in the event
+   this.type = type;  // The type of event that this is
   }
   public double getTime(){
    return time ;

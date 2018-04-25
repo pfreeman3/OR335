@@ -14,14 +14,25 @@ public class RechargeStation extends Station{
   protected double accumUtilization;
   protected double lastTime;
   protected int departures;
+  public Simulator ss;
+  protected int maxQL = 0; // Highest number of people in queue
+  protected int maxOu = 0; // Highest number of people in the outlets at once
   
-
-  public RechargeStation(String name, double position, int capacity){
+  public RechargeStation(){
+    this.name = "Larry";
+    this.position = -1;
+    this.capacity = 0;
+    this.carQueue = new ArrayList<Car>();
+    this.outletQueue = new ArrayList<Car>();
+    
+  }
+  public RechargeStation(String name, double position, int capacity, Simulator ss){
     this.name = name;
     this.position = position;
     this.capacity = capacity;
     this.carQueue = new ArrayList<Car>();
     this.outletQueue = new ArrayList<Car>();
+    this.ss = ss;
   }
   
   public void queueCar(Car car){
@@ -41,7 +52,7 @@ public class RechargeStation extends Station{
   }
   
   // Puts a car in this station's outlets
-  public void queueOutlet(Car car){
+  public void queueOutlet(Car car) throws Exception{
     // First, collect statistics
     updateStats();
     // queue the car
@@ -67,6 +78,12 @@ public class RechargeStation extends Station{
     accumUtilization += (ss.Clock - lastTime)*outletsInUse;
     accumWaiting += (ss.Clock - lastTime)*queueLength;
     lastTime = ss.Clock;
+    if(maxQL < queueLength){
+      maxQL = queueLength;
+    }
+    if(maxOu < outletsInUse){
+      maxOu = outletsInUse;
+    }
   }
   
   // This is a profile of 
@@ -79,7 +96,9 @@ public class RechargeStation extends Station{
       "\nOutlets in Use: " + outletsInUse +
       "\nDepartures: " + departures +     
       "\nMy WaitingTime: " + accumWaiting +
-      "\nUtilization: " + accumUtilization;
+      "\nUtilization: " + accumUtilization +
+      "\nMaxQL:" + maxQL +
+      "\nMaxOu:" + maxOu;
     return wStr;
   }
   
@@ -95,6 +114,16 @@ public class RechargeStation extends Station{
   public int getCapacity(){
     return capacity;
   }
-
-
+  public int getOutletsInUse(){
+    return outletsInUse;
+  }
+  public int getQueueLength(){
+    return queueLength;
+  }
+  public ArrayList<Car> getCarQueue(){
+    return carQueue;
+  }
+  public String toString(){
+    return "Recharge:" + name + ":" + position;
+  }
 }

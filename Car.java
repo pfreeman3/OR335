@@ -15,8 +15,8 @@
 // 3 = "Philly"
 // 4 = "NY"
 // 5 = "Boston"
-
-
+import java.math.*;
+import java.util.*;
 public class Car{
   public double range;
   public double searchRange;
@@ -31,6 +31,13 @@ public class Car{
   public int homePointArr[] = {0,0,109,248,346,561}; // distances from richmond
   public double chargePer;
   public boolean destBound;
+  public Station stationArray[];
+  public int currentStation; // The current station within the stationArray that this car resides
+  public Simulator ss;
+  public int homePoint;
+  public int destinationPoint;
+  public int distance;
+  public int chargeTime;
 
   /**
   * Creates Car for use in simulation; we will be considering several factors,
@@ -46,7 +53,8 @@ public class Car{
              int wealth,
              int home,
              double stayTime,
-             int destination){
+             int destination,
+             Simulator ss) throws Exception{
 
     chargePer = 100.0; // The % that the batery is charged.
     this.carType = carType;
@@ -55,15 +63,17 @@ public class Car{
     this.stayTime = stayTime;
     this.destination = destination;
     destBound = true;
+    this.ss = ss;
 
     // Make the things that come with the attributes
-    int chargeTime = chargeTimeArr[carType]; // Time it takes to charge a car, will differ, find
+    chargeTime = chargeTimeArr[carType]; // Time it takes to charge a car, will differ, find
     range = rangeArr[carType]; // This is the range on a full battery, possible distance is calculated from range*%batterty
     searchRange = range/4; // This is the threshhold where it will look for more
-    int homePoint = homePointArr[home]; //distance from richmond
-    int destinationPoint = homePointArr[destination];
-    int distance = destinationPoint - homePoint; // This is the distance the car needs to travel
-    final int originalDistance = distance;
+    homePoint = homePointArr[home]; //distance from richmond
+    destinationPoint = homePointArr[destination];
+    distance = destinationPoint - homePoint; // This is the distance the car needs to travel
+    
+    stationArray = getStationList();
   }
 
   /**
@@ -74,25 +84,121 @@ public class Car{
     car = null;
   }
   public Station getNextStation(){
-    Station ans = StationArray[0];
+    Station ans = stationArray[currentStation+1];
     return ans;
   }
   public Station getLastStation(){
-
-    return new RechargeStation();
+    Station ans = stationArray[currentStation-1];
+    return ans;
   }
-  // NOT FINISHED
-  public void moveUp(){
-
+  public Station[] getStations(){
+    return stationArray;
   }
-
-
-//  public ArrayList<Station> getStationList(){
-    //Basic Logic
-    // Can I get to my destination?
-    // If I can, add it to the end of the list
-    // if not add the furthest station in my range
-    // if there is no station, throw an exception
- // }
-
+  public Station getCurrentStation(){
+    Station ans = stationArray[currentStation];
+    return ans;
+  }
+  
+  // Moves the car up 1 station
+  public void moveUp() throws Exception{
+    currentStation++;
+    if (currentStation > stationArray.length){
+      throw new Exception("You incremented the station when it was at its destination");
+    }
+  }
+  
+  // Helper function for the getStationList() function that checks forward
+  public Station searchForward(double pos){
+    Station target = new RechargeStation();
+    for(int i=0;i<ss.StationArray.length;i++){
+      if(ss.StationArray[i].getPosition() < pos+range && ss.StationArray[i] instanceof RechargeStation){
+        target = ss.StationArray[i];
+      }
+    }
+    return target;
+  }
+  
+  // Helper function for the getStationList() function that checks forward
+  public Station searchBack(double pos){
+    Station target = new RechargeStation();
+    for(int i=ss.StationArray.length-1;i>=0;i--){
+      if(ss.StationArray[i].getPosition() > pos-range && ss.StationArray[i] instanceof RechargeStation){
+        target = ss.StationArray[i];
+      }
+    }
+    return target;
+  }
+  
+  // Function that returns a list of Stations that this car will go to along its journey
+  public Station[] getStationList() throws Exception{
+    boolean isDone = false;
+    boolean returnTrip = false;
+    double pos = (double)homePoint; // Car's starting position
+    int direction = 0;
+    if(distance > 0){
+      direction = 1;
+    }
+    else if (distance < 0){
+      direction = -1;
+    }
+    if (direction == 0){
+      throw new Exception("This car doesn't have a direction: Distance = " + distance);
+    }
+    ArrayList<Station> stations = new ArrayList<Station>();
+    stations.add(ss.cityList.get(home-1)); // Adds the initial position to the array (the homePoint)
+    while(!isDone){
+      // If you're going left to right...
+      if(direction==1){
+        // Can i get to my destination?
+        double target = destinationPoint*(!returnTrip ? 1:0) + homePoint*(returnTrip ? 1:0);
+        if(range > (target - pos)){
+          // If I'm not on my way back, I must be arriving at my destintaiton
+          if(!returnTrip){
+            stations.add(ss.cityList.get(destination-1));
+            pos = ss.cityList.get(destination-1).getPosition();
+            direction=-1;
+            returnTrip = true;
+          }
+          // If I am returning, I must be returning home
+          else if (returnTrip){
+            stations.add(ss.cityList.get(home-1));
+            isDone = true;
+          }
+        }
+        // If I can't get to my destination, then get me to the furthest station
+        else{
+          stations.add(searchForward(pos));
+          pos = stations.get(stations.size()-1).getPosition();
+        }
+      }
+      // If you're going right to left...
+      if(direction==-1){
+        // Can I get to my destination?
+        double target = destinationPoint*(!returnTrip ? 1:0) + homePoint*(returnTrip ? 1:0);
+        if(range > (pos - target)){
+          if(!returnTrip){
+            stations.add(ss.cityList.get(destination-1));
+            pos = ss.cityList.get(destination-1).getPosition();
+            direction=1;
+            returnTrip = true;
+          }
+          // If I am returning, I must be returning home
+          else if (returnTrip){
+            stations.add(ss.cityList.get(home-1));
+            isDone = true;
+          }
+        }
+        // If I can't get to my destination, then get me to the furthest station
+        else{
+          stations.add(searchBack(pos));
+          pos = stations.get(stations.size()-1).getPosition();
+        }
+      }
+    }
+    return stations.toArray(new Station[stations.size()]);
+  }
+  
+  public String reportStatistics(){
+    return "";
+  }
 }
