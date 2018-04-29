@@ -25,6 +25,7 @@ public class Simulator {
     public Station[] StationArray;
     public double avgRoundTrip = 0;
     public double longestTime=0;
+//    public ArrayList<Car> carList = new ArrayList<Car>();
     
     public void Initialization() throws Exception{
       StationArray = new Station[]{ 
@@ -89,9 +90,7 @@ public class Simulator {
       }
       LastEventTime = Clock;
     }
-    
-    // FRAMEWORK: KINDA-DONE
-    // FLESHING: NOT DONE
+
     // sta.chargeRate is the amount of time it takes to charge 100% IN HOURS
     // car.direction is +1 if it's going + on the line, -1 if it's going - on the line
     public void ScheduleOutletDeparture(RechargeStation sta, Car car) throws Exception{
@@ -140,11 +139,18 @@ public class Simulator {
       if(e.getCar().destBound){
         //and make a new car from a new city
         Car newCar = randomCar();
+//        carList.add(newCar);
         ScheduleCityDeparture(newCar, (City)cityList.get(newCar.home-1));
       }
       double travelTime = Math.abs( (e.getStation().getPosition() - e.getCar().getNextStation().getPosition()) /highwaySpeed);
-      Event getToStation = new Event(e.getCar().getNextStation(), Clock + travelTime, e.getCar(), arriveStation);
-      FutureEventList.enqueue(getToStation);
+      if(e.getCar().getNextStation() instanceof City){
+        Event arriveCityEvent = new Event(e.getCar().getNextStation(), Clock + travelTime, e.getCar(), arriveCity);
+        FutureEventList.enqueue(arriveCityEvent);
+      }
+      if(e.getCar().getNextStation() instanceof RechargeStation){
+        Event arriveStationEvent = new Event(e.getCar().getNextStation(), Clock + travelTime, e.getCar(), arriveStation);
+        FutureEventList.enqueue(arriveStationEvent);
+      }
     }
     
     public void ProcessCityArrival(Event e) throws Exception{
@@ -157,15 +163,21 @@ public class Simulator {
         avgRoundTrip = (avgRoundTrip*numFinishes + time) / (numFinishes+1);
         numFinishes++;
 
-
+//        carList.remove(e.getCar());
         e.getCar().deleteCar(e.getCar());
       }
       else{
         // Send the car to its next station after it's stayTime + travelTime
         e.getCar().destBound = false;
         double travelTime = Math.abs( (e.getStation().getPosition() - e.getCar().getNextStation().getPosition()) /highwaySpeed);
-        Event departCity = new Event(e.getCar().getNextStation(), Clock + e.getCar().stayTime + travelTime, e.getCar(), arriveStation);
-        FutureEventList.enqueue(departCity);
+        if(e.getCar().getNextStation() instanceof City){
+          Event arriveCityEvent = new Event(e.getCar().getNextStation(), Clock + travelTime, e.getCar(), arriveCity);
+          FutureEventList.enqueue(arriveCityEvent);
+        }
+        if(e.getCar().getNextStation() instanceof RechargeStation){
+          Event arriveStationEvent = new Event(e.getCar().getNextStation(), Clock + travelTime, e.getCar(), arriveStation);
+          FutureEventList.enqueue(arriveStationEvent);
+        }
       }
     }
 

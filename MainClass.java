@@ -10,7 +10,7 @@ public class MainClass{
   ss.stationEnergyCost= 1; // This is Dollars per Hour to run 1 outlet in a station
   ss.stationCapacity = 30;
   // DELAY TIME
-  ss.delayTime = .1; // This is the delay between cars, right now this is .1 hours, so 6 min between cars
+  ss.delayTime = 1000; // This is the delay between cars, right now this is .1 hours, so 6 min between cars
   ss.Initialization();            
   //Loop until clock is greater than 10000
   while (ss.Clock<=10000){

@@ -194,10 +194,21 @@ public class Car{
         }
       }
     }
+    int x = 1;
     return stations.toArray(new Station[stations.size()]);
   }
   
   public double getTime(){
     return ss.Clock-tStart;
+  }
+  
+  public String toString(){
+    String wStr = 
+      "CAR\n"
+      + home + "->" + destination + 
+      "\ndestBound:" + destBound +
+      "\ntStart:" + tStart +
+      "\nStationList:" + stationArray + "\n";
+    return wStr;
   }
 }
