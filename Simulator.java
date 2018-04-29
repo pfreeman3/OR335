@@ -1,5 +1,6 @@
 import java.math.*;
 import java.util.*;
+import javax.swing.*;
 public class Simulator {
  public Simulator(){}
     public final static int departCity=1;
@@ -7,6 +8,7 @@ public class Simulator {
     public final static int departOutlet=3;
     public final static int departStation=4;
     public final static int arriveCity=5;
+    public double delayTime = 100000.0; // Time between car spawns
     public double Clock,LastEventTime;
     public int highwaySpeed;
     public EventList FutureEventList;
@@ -15,24 +17,32 @@ public class Simulator {
     public ArrayList<Station> stationList= new ArrayList<Station>();
     public int numEvents = 0;
     public int numCarsMade = 0;
-
-    public Station StationArray[] = { new City("Richmond",0,this),
-                                    new RechargeStation("S1",45,30,this),
-                                    new RechargeStation("S2",104,30,this),
-                                    new City("Washington D.C.",109,this),
-                                    new RechargeStation("S3",136,30,this),
-                                    new RechargeStation("S4",210,30,this),
-                                    new City("Philly", 248,this),
-                                    new RechargeStation("S5",250,30,this),
-                                    new RechargeStation("S6",315,30,this),
-                                    new RechargeStation("S7",335,30,this),
-                                    new City("New York City",346,this),
-                                    new RechargeStation("S8",404.5,30,this),
-                                    new RechargeStation("S9",490,30,this),
-                                    new RechargeStation("S10",538,30,this),
-                                    new City("Boston",561,this)};
-
+    public int numFinishes = 0;
+    public int stationFlatCost;
+    public int stationOutletCost;
+    public int stationEnergyCost;
+    public int stationCapacity;
+    public Station[] StationArray;
+    public double avgRoundTrip = 0;
+    public double longestTime=0;
+    
     public void Initialization() throws Exception{
+      StationArray = new Station[]{ 
+        new City           ("Richmond",0,this),
+        new RechargeStation("S1",45,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new RechargeStation("S2",104,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new City           ("Washington D.C.",109,this),
+        new RechargeStation("S3",136,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new RechargeStation("S4",210,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new City           ("Philly", 248,this),
+        new RechargeStation("S5",250,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new RechargeStation("S6",315,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new RechargeStation("S7",335,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new City           ("New York City",346,this),
+        new RechargeStation("S8",404.5,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new RechargeStation("S9",490,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new RechargeStation("S10",538,stationCapacity,this,stationFlatCost,stationOutletCost,stationEnergyCost),
+        new City           ("Boston",561,this)};
       Clock=0.0;
       highwaySpeed = 60;
       LastEventTime=0.0;
@@ -87,6 +97,7 @@ public class Simulator {
     public void ScheduleOutletDeparture(RechargeStation sta, Car car) throws Exception{
      sta.queueOutlet(car);
      double chargeTime = (100-car.chargePer)*(car.chargeTime/60.0)/100; // This may be car specific
+     sta.updateCost(chargeTime);
      Event departOutletEvent = new Event(sta, Clock + chargeTime, car, departOutlet);
      car.chargePer = 100.0;
      FutureEventList.enqueue(departOutletEvent);
@@ -119,7 +130,7 @@ public class Simulator {
     }
     
     public void ScheduleCityDeparture(Car car, City city){
-      double delayTime = .01; // This will be random in the future
+      //double delayTime = .1; // This will be random in the future
       Event cityDeparture = new Event(city, Clock + delayTime, car, departCity); // delay will be random, right now it's .1
       FutureEventList.enqueue(cityDeparture);
     }
@@ -139,8 +150,15 @@ public class Simulator {
     public void ProcessCityArrival(Event e) throws Exception{
       e.getCar().moveUp();
       if(!e.getCar().destBound){
-        e.getCar().reportStatistics(); // For right now, this does nothing, but it will once we have a working model
-        e.getCar().deleteCar(e.getCar()); // Destroy the car? I'm really not sure how this will work
+        double time = e.getCar().getTime();
+        if(time > longestTime){
+          longestTime = time;
+        }
+        avgRoundTrip = (avgRoundTrip*numFinishes + time) / (numFinishes+1);
+        numFinishes++;
+
+
+        e.getCar().deleteCar(e.getCar());
       }
       else{
         // Send the car to its next station after it's stayTime + travelTime
@@ -195,6 +213,44 @@ public class Simulator {
     
     // END OF RNG -----------------------------------------------------------------------------
     
+    public String tableAsString(JTable table){
+      String tableString = "";
+      for (int row = 0; row < table.getRowCount(); row++) {
+        for (int col = 0; col < table.getColumnCount(); col++) {
+          tableString += table.getValueAt(row, col);
+          tableString += "\t";
+        }
+        tableString += "\n";
+      }
+      return tableString;
+    }
+    
+    public JTable getDataTable(){
+      String colNames[] = 
+      { "name",
+        "position",
+        "capacity", 
+        "inOutlet", 
+        "maxOutl", 
+        "qLength",
+        "maxQLen", 
+        "Waiting", 
+        "Util", 
+        "departs",
+        "cost"};
+      Object[][] dat = new Object[stationList.size() +1][colNames.length];
+      dat[0] = colNames;
+      int count = 1;
+      for(int i=0; i < StationArray.length; i++){
+        if(StationArray[i] instanceof RechargeStation){
+          dat[count] = StationArray[i].getData();
+          count++;
+        }
+      }
+      JTable table = new JTable(dat,colNames);
+      return table;
+    }
+    
     public  void ReportGeneration(){
 //     double RHO=TotalBusy/Clock;
 //        System.out.println("\n  Server Utilization                         " +RHO );
@@ -207,6 +263,10 @@ public class Simulator {
        System.out.println("Clock:" + Clock);
        System.out.println("Events:" + numEvents);
        System.out.println("Cars:" + numCarsMade);
+       System.out.println("CarsFinished:" + numFinishes);
+       System.out.println("Average:" + avgRoundTrip);
+       System.out.println("Longest Time:" + longestTime + "\n");
+       System.out.println(tableAsString(getDataTable()));
     }
 }
 

@@ -19,7 +19,6 @@ import java.math.*;
 import java.util.*;
 public class Car{
   public double range;
-  public double searchRange;
   public int carType;
   public int wealth;
   public int home;
@@ -38,7 +37,7 @@ public class Car{
   public int destinationPoint;
   public int distance;
   public int chargeTime;
-
+  public double tStart;
   /**
   * Creates Car for use in simulation; we will be considering several factors,
   * which will determine under what conditions the car will stop at a charging station.
@@ -64,11 +63,11 @@ public class Car{
     this.destination = destination;
     destBound = true;
     this.ss = ss;
+    tStart = ss.Clock;
 
     // Make the things that come with the attributes
     chargeTime = chargeTimeArr[carType]; // Time it takes to charge a car, will differ, find
     range = rangeArr[carType]; // This is the range on a full battery, possible distance is calculated from range*%batterty
-    searchRange = range/4; // This is the threshhold where it will look for more
     homePoint = homePointArr[home]; //distance from richmond
     destinationPoint = homePointArr[destination];
     distance = destinationPoint - homePoint; // This is the distance the car needs to travel
@@ -198,7 +197,7 @@ public class Car{
     return stations.toArray(new Station[stations.size()]);
   }
   
-  public String reportStatistics(){
-    return "";
+  public double getTime(){
+    return ss.Clock-tStart;
   }
 }

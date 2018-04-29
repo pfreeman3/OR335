@@ -17,6 +17,10 @@ public class RechargeStation extends Station{
   public Simulator ss;
   protected int maxQL = 0; // Highest number of people in queue
   protected int maxOu = 0; // Highest number of people in the outlets at once
+  protected int flatCost;
+  protected int capCost;
+  protected int energyCost;
+  protected double cost;
   
   public RechargeStation(){
     this.name = "Larry";
@@ -26,13 +30,15 @@ public class RechargeStation extends Station{
     this.outletQueue = new ArrayList<Car>();
     
   }
-  public RechargeStation(String name, double position, int capacity, Simulator ss){
+  public RechargeStation(String name, double position, int capacity, Simulator ss, int flatCost, int capCost, int energyCost){
     this.name = name;
     this.position = position;
     this.capacity = capacity;
     this.carQueue = new ArrayList<Car>();
     this.outletQueue = new ArrayList<Car>();
     this.ss = ss;
+    this.cost = flatCost + capCost*capacity;
+    this.energyCost = energyCost;
   }
   
   public void queueCar(Car car){
@@ -40,7 +46,7 @@ public class RechargeStation extends Station{
     updateStats();
     // queue the car
     queueLength++;
-    outletQueue.add(car);
+    carQueue.add(car);
   }
   
   public void dequeueCar(Car car){
@@ -48,7 +54,7 @@ public class RechargeStation extends Station{
     updateStats();
     // Dequeue the car
     queueLength--;
-    outletQueue.remove(car);
+    carQueue.remove(car);
   }
   
   // Puts a car in this station's outlets
@@ -86,20 +92,8 @@ public class RechargeStation extends Station{
     }
   }
   
-  // This is a profile of 
-  public String report(){
-    String wStr = 
-      "STATION REPORT\n" +
-      "Name: " + name + 
-      "\nPosition: " + position + 
-      "\nCars In Queue: " + queueLength +
-      "\nOutlets in Use: " + outletsInUse +
-      "\nDepartures: " + departures +     
-      "\nMy WaitingTime: " + accumWaiting +
-      "\nUtilization: " + accumUtilization +
-      "\nMaxQL:" + maxQL +
-      "\nMaxOu:" + maxOu;
-    return wStr;
+  public void updateCost(double charge){
+    cost+= energyCost*charge;
   }
   
   public double getPosition(){
@@ -109,7 +103,7 @@ public class RechargeStation extends Station{
     return carQueue;
   }
   public double getCosts(){
-    return 1000000;
+    return cost;
   }
   public int getCapacity(){
     return capacity;
@@ -125,5 +119,28 @@ public class RechargeStation extends Station{
   }
   public String toString(){
     return "Recharge:" + name + ":" + position;
+  }
+  
+    // This is a profile of 
+  public String report(){
+    String wStr = 
+      "STATION REPORT\n" +
+      "Name: " + name + 
+      "\nPosition: " + position + 
+      "\nCars In Queue: " + queueLength +
+      "\nOutlets in Use: " + outletsInUse +
+      "\nDepartures: " + departures +     
+      "\nMy WaitingTime: " + accumWaiting +
+      "\nUtilization: " + accumUtilization +
+      "\nMaxQL:" + maxQL +
+      "\nMaxOu:" + maxOu +
+      "\nCost:" + cost;
+    return wStr;
+  }
+  
+  // Returns the data in a list format for the use in JTable
+  public Object[] getData(){
+    Object data[] = { name, position, capacity, outletsInUse, maxOu, queueLength,(int)maxQL, (int)accumWaiting, (int)accumUtilization, departures, (int)cost};
+    return data;
   }
 }
