@@ -171,11 +171,11 @@ public class Simulator {
         e.getCar().destBound = false;
         double travelTime = Math.abs( (e.getStation().getPosition() - e.getCar().getNextStation().getPosition()) /highwaySpeed);
         if(e.getCar().getNextStation() instanceof City){
-          Event arriveCityEvent = new Event(e.getCar().getNextStation(), Clock + travelTime, e.getCar(), arriveCity);
+          Event arriveCityEvent = new Event(e.getCar().getNextStation(), Clock + travelTime + e.getCar().stayTime, e.getCar(), arriveCity);
           FutureEventList.enqueue(arriveCityEvent);
         }
         if(e.getCar().getNextStation() instanceof RechargeStation){
-          Event arriveStationEvent = new Event(e.getCar().getNextStation(), Clock + travelTime, e.getCar(), arriveStation);
+          Event arriveStationEvent = new Event(e.getCar().getNextStation(), Clock + travelTime + e.getCar().stayTime, e.getCar(), arriveStation);
           FutureEventList.enqueue(arriveStationEvent);
         }
       }
