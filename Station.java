@@ -31,12 +31,16 @@ public class Station{
   public void dequeueCar(Car car){}
   
   public void queueOutlet(Car car) throws Exception{}
-  
+  public ArrayList<Car> getCarqueue(){return null;}
   public void dequeueOutlet(Car car){}
   public ArrayList<Car> getCarQueue(){
     return new ArrayList<Car>();
   }
   public String report(){
     return "Larry Laffer did nothing wrong";
+  }
+  public Object[] getData(){
+    Object data[] = {};
+    return data;
   }
 }
